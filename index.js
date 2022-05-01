@@ -50,6 +50,24 @@ async function run() {
 			res.send(events);
 		})
 
+		// Event Search by user
+		app.get('/eventSearch', async(req, res) => {
+			const query = {};
+			const cursor = eventsCollection.find(query);
+			const events = await cursor.toArray();
+			if(req.query.search){
+				const search = req.query.search;
+				console.log(search);
+				const matched = events.filter(event => event.title.toLocaleLowerCase().includes((search).toLocaleLowerCase()));
+				res.send(matched);
+				
+			} else{
+				res.send(events);
+			}
+			
+		})
+
+
 		// Find Event by Specific Id
 		app.get('/events/:eventId', async(req, res) => {
 			// console.log(req.params);
@@ -114,7 +132,7 @@ async function run() {
 			const result = await userEventsCollection.deleteOne(query);
 			res.send(result);
 		})
-
+	
 
 		// -------------####ADMIN#####-------------- //
 		// Check admin password and email
